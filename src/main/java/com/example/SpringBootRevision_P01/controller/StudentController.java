@@ -2,6 +2,7 @@ package com.example.SpringBootRevision_P01.controller;
 
 import com.example.SpringBootRevision_P01.dto.StudentDTO;
 import com.example.SpringBootRevision_P01.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +13,8 @@ import java.util.List;
 @RequestMapping("/student")
 public class StudentController {
 
-    private final StudentService studentService;
-
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
-    }
+    @Autowired
+    StudentService studentService;
 
     @GetMapping("/getAllStudent")
     public ResponseEntity<List<StudentDTO>> getAllStudent() {
