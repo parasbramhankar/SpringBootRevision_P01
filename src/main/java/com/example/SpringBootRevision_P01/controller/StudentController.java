@@ -1,12 +1,9 @@
 package com.example.SpringBootRevision_P01.controller;
 
-
 import com.example.SpringBootRevision_P01.dto.StudentDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +19,66 @@ public class StudentController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentDTO>getStudentById(@RequestBody int id){
-
-        StudentDTO student=new StudentDTO();
-        boolean check=false;
+    public ResponseEntity<StudentDTO>getStudentById(@PathVariable int id){
 
         for(StudentDTO s:studentList){
             if(s.getId()==id){
-                check=true;
-                student.setId(s.getId());
-                student.setAge(s.getAge());
-                student.setName(s.getName());
-                student.setEmail(s.getEmail());
-                break;
+               return ResponseEntity.ok(s);
             }
         }
-        if(!check){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<String>addStudent(@RequestBody StudentDTO studentDTO){
+
+        studentList.add(studentDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Student added successfully");
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentDTO>updateStudent(@PathVariable int id, @RequestBody StudentDTO studentDTO){
+
+        for(StudentDTO s: studentList){
+            if(s.getId()==id){
+                s.setAge(studentDTO.getAge());
+                s.setName(studentDTO.getName());
+                s.setEmail(studentDTO.getEmail());
+
+                return ResponseEntity.ok(s);
+            }
         }
-        return ResponseEntity.ok(student);
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String>updateEmail(@PathVariable int id, @RequestBody String email){
+
+        for(StudentDTO s:studentList){
+            if(s.getId()==id){
+                s.setEmail(email);
+
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Email updated successfully");
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid id:Student not found");
+
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String>deleteStudent(@PathVariable int id){
+
+        for(StudentDTO s:studentList){
+            if(s.getId()==id){
+                studentList.remove(s);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Student deleted successfully");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid id:Student not found");
     }
 
 }
